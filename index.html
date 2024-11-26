@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Naga</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: green;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .game-container {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            background-color: #000;
+            border: 2px solid white;
+        }
+        .naga {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            border-radius: 50%;
+            top: 175px;
+            left: 275px;
+        }
+        .wall {
+            position: absolute;
+            width: 20px;
+            height: 100%;
+            background-color: white;
+            left: 300px; /* Tempatkan di tengah */
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="naga" id="naga"></div>
+        <div class="wall"></div>
+    </div>
+
+    <script>
+        // Menentukan posisi awal naga
+        let naga = document.getElementById('naga');
+        let xPos = 275;
+        let yPos = 175;
+        const speed = 5;
+
+        // Menangani gerakan dengan tombol 'W', 'A', 'S', 'D'
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'w') { // Gerak naik
+                yPos -= speed;
+            } else if (event.key === 's') { // Gerak turun
+                yPos += speed;
+            } else if (event.key === 'a') { // Gerak kiri
+                xPos -= speed;
+            } else if (event.key === 'd') { // Gerak kanan
+                xPos += speed;
+            }
+
+            // Update posisi naga
+            naga.style.top = yPos + 'px';
+            naga.style.left = xPos + 'px';
+
+            // Cek apakah naga menabrak tembok di tengah layar
+            if (xPos > 290 && xPos < 310) {
+                if (yPos > 0 && yPos < 400) {
+                    // Jika menabrak tembok, arahkan ke link YouTube
+                    window.location.href = 'vid.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
