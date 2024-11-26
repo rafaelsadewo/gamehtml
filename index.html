@@ -82,6 +82,51 @@
                 window.location.href = 'vid.html';
             }
         });
+
+        // Menambahkan kontrol sentuh untuk perangkat mobile
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        // Ketika sentuhan dimulai
+        document.addEventListener('touchstart', function(event) {
+            touchStartX = event.touches[0].clientX;
+            touchStartY = event.touches[0].clientY;
+        });
+
+        // Ketika sentuhan berlanjut
+        document.addEventListener('touchmove', function(event) {
+            const touchEndX = event.touches[0].clientX;
+            const touchEndY = event.touches[0].clientY;
+
+            // Hitung pergerakan sentuhan
+            let deltaX = touchEndX - touchStartX;
+            let deltaY = touchEndY - touchStartY;
+
+            // Update posisi naga berdasarkan pergerakan sentuhan
+            xPos += deltaX * 0.05;  // Sesuaikan kecepatan pergerakan
+            yPos += deltaY * 0.05;  // Sesuaikan kecepatan pergerakan
+
+            // Update posisi naga
+            naga.style.top = yPos + 'px';
+            naga.style.left = xPos + 'px';
+
+            // Simpan posisi sentuhan terbaru untuk perhitungan berikutnya
+            touchStartX = touchEndX;
+            touchStartY = touchEndY;
+
+            // Cek apakah naga menabrak tembok atau pinggir layar
+            if (xPos > 290 && xPos < 310) {
+                if (yPos > 0 && yPos < 400) {
+                    // Jika menabrak tembok, arahkan ke link vid.html
+                    window.location.href = 'vid.html';
+                }
+            }
+
+            if (xPos <= 0 || xPos >= 550 || yPos <= 0 || yPos >= 350) {
+                // Jika menabrak pinggir layar, arahkan ke link vid.html
+                window.location.href = 'vid.html';
+            }
+        });
     </script>
 </body>
 </html>
