@@ -50,7 +50,7 @@
         let naga = document.getElementById('naga');
         let xPos = 275;
         let yPos = 175;
-        const speed = 5;
+        const speed = 1; // Kecepatan pergerakan naga
 
         // Menangani gerakan dengan tombol 'W', 'A', 'S', 'D' dan tombol arah
         document.addEventListener('keydown', function(event) {
@@ -98,13 +98,13 @@
             const touchEndX = event.touches[0].clientX;
             const touchEndY = event.touches[0].clientY;
 
-            // Hitung pergerakan sentuhan
+            // Hitung pergerakan sentuhan (perbedaan posisi)
             let deltaX = touchEndX - touchStartX;
             let deltaY = touchEndY - touchStartY;
 
-            // Update posisi naga berdasarkan pergerakan sentuhan
-            xPos += deltaX * 0.05;  // Sesuaikan kecepatan pergerakan
-            yPos += deltaY * 0.05;  // Sesuaikan kecepatan pergerakan
+            // Update posisi naga secara bertahap, berdasarkan pergerakan sentuhan
+            xPos += deltaX * 0.2;  // Mengurangi kecepatan gerak untuk kelancaran
+            yPos += deltaY * 0.2;  // Mengurangi kecepatan gerak untuk kelancaran
 
             // Update posisi naga
             naga.style.top = yPos + 'px';
