@@ -255,7 +255,7 @@ p#currentMapInfo {
 
 /* Gaya Instruksi Editor Peta (muncul di mode edit) */
 .editor-instructions {
-    width: 80%;
+    width: 100%;
     background-color: #e6f7ff;
     border: 1px solid #b3e0ff;
     border-radius: 8px;
