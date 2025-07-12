@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ... (deklarasi const lainnya) ...
-    
+
     const codeInput = document.getElementById('codeInput');
     const runButton = document.getElementById('runButton');
     const resetButton = document.getElementById('resetButton');
@@ -9,19 +9,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const logContent = document.getElementById('logContent');
 
     const editMapButton = document.getElementById('editMapButton');
-    const saveMapButton = document.getElementById('saveMapButton'); // Perbaikan: getElementById
+    const saveMapButton = document.getElementById('saveMapButton'); // Diperbaiki dari "document = document.getElementById"
     const loadMapButton = document.getElementById('loadMapButton');
     const clearMapButton = document.getElementById('clearMapButton');
     const editModeTools = document.querySelector('.edit-mode-tools');
     const editModeSelect = document.getElementById('editModeSelect');
     const currentMapInfo = document.getElementById('currentMapInfo');
-    
+
     document.getElementById('currentMapInfo').parentElement.style.display = 'none';
 
     const editorInstructions = document.getElementById('editorInstructions');
 
     // Dapatkan ukuran dari CSS Variables untuk memastikan sinkronisasi
     const computedStyle = getComputedStyle(document.documentElement);
+    // Menggunakan try-catch sebagai fallback yang lebih aman
     let CELL_SIZE = 40; // Default fallback
     let ROBOT_WIDTH = 45; // Default fallback
     let ROBOT_HEIGHT = 35; // Default fallback
@@ -34,19 +35,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // addLog("Warning: Could not read CSS variables for CELL_SIZE, ROBOT_WIDTH, or ROBOT_HEIGHT. Using fallback values. Error: " + e.message);
     }
 
-
     const GRID_SIZE = 10;
 
     let robotGridX, robotGridY;
-    let currentDirection; // 'up', 'right', 'down', 'left'
+    let currentDirection;
 
     let isEditMode = false;
     let currentMapData = {
         start: { x: 0, y: 0 },
         target: [{ x: 9, y: 9 }],
         obstacles: []
-    }; // Default map
-    let editTool = 'obstacle'; // Default tool for map editing
+    };
+    let editTool = 'obstacle';
 
     function updateRobotPosition() {
         const cellLeft = robotGridX * CELL_SIZE;
@@ -63,11 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'up': rotation = 0; break;
             case 'right': rotation = 90; break;
             case 'down': rotation = 180; break;
-            case 'left': rotation = 270; break;
+            case 'left': rotation = 270; break; // Menggunakan 270 derajat untuk konsistensi
         }
         robot.style.transform = `rotate(${rotation}deg)`;
     }
-
 
     function addLog(message) {
         const timestamp = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -112,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 robotArena.appendChild(cell);
             }
         }
-
         robotArena.appendChild(robot);
         updateRobotPosition();
     }
@@ -204,12 +202,12 @@ document.addEventListener('DOMContentLoaded', () => {
             let executed = false;
             let nextX = robotGridX;
             let nextY = robotGridY;
-            let steps = 1; // Default step for maju, mundur, kanan, kiri
+            let steps = 1;
 
             const matchMaju = command.match(/^maju(?:\((\d+)\))?$/);
-            const matchKanan = command.match(/^kanan(?:\((\d+)\))?$/); // New regex for kanan
-            const matchKiri = command.match(/^kiri(?:\((\d+)\))?$/);   // New regex for kiri
-            const matchMundur = command.match(/^mundur(?:\((\d+)\))?$/); // New regex for mundur
+            const matchKanan = command.match(/^kanan(?:\((\d+)\))?$/);
+            const matchKiri = command.match(/^kiri(?:\((\d+)\))?$/);
+            const matchMundur = command.match(/^mundur(?:\((\d+)\))?$/);
 
             if (matchMaju) {
                 steps = parseInt(matchMaju[1] || '1');
@@ -246,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     await new Promise(resolve => setTimeout(resolve, 350));
                 }
                 executed = true;
-            } else if (matchKanan) { // Handle kanan(N)
+            } else if (matchKanan) {
                 steps = parseInt(matchKanan[1] || '1');
                 for (let i = 0; i < steps; i++) {
                     switch (currentDirection) {
@@ -260,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     await new Promise(resolve => setTimeout(resolve, 350));
                 }
                 executed = true;
-            } else if (matchKiri) { // Handle kiri(N)
+            } else if (matchKiri) {
                 steps = parseInt(matchKiri[1] || '1');
                 for (let i = 0; i < steps; i++) {
                     switch (currentDirection) {
@@ -274,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     await new Promise(resolve => setTimeout(resolve, 350));
                 }
                 executed = true;
-            } else if (matchMundur) { // Handle mundur(N)
+            } else if (matchMundur) {
                 steps = parseInt(matchMundur[1] || '1');
                 for (let i = 0; i < steps; i++) {
                     nextX = robotGridX;
@@ -328,7 +326,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showMessage('fail', 'Target Belum Tercapai!');
         }
 
-        // PERBAIKAN: Rotasi robot menjadi 0 derajat (menghadap ke atas) setelah eksekusi selesai
         currentDirection = 'up';
         updateRobotPosition();
 
@@ -343,9 +340,6 @@ document.addEventListener('DOMContentLoaded', () => {
         addLog("Robot direset ke posisi awal peta.");
     });
 
-    // --- LOGIKA MAP EDITOR ---
-
-    // Toggle Edit Mode
     editMapButton.addEventListener('click', () => {
         isEditMode = !isEditMode;
         if (isEditMode) {
@@ -357,12 +351,12 @@ document.addEventListener('DOMContentLoaded', () => {
             saveMapButton.style.display = 'inline-block';
             clearMapButton.style.display = 'inline-block';
             editModeTools.style.display = 'block';
-            loadMapButton.disabled = true; // Nonaktifkan load map saat edit
+            loadMapButton.disabled = true;
 
             codeInput.style.display = 'none';
             runButton.style.display = 'none';
             resetButton.style.display = 'none';
-            robot.style.display = 'none'; // Sembunyikan gambar robot
+            robot.style.display = 'none';
             editorInstructions.style.display = 'block';
 
             addLog("Memasuki Mode Edit Peta. Klik pada grid untuk menempatkan elemen.");
@@ -375,12 +369,12 @@ document.addEventListener('DOMContentLoaded', () => {
             saveMapButton.style.display = 'none';
             clearMapButton.style.display = 'none';
             editModeTools.style.display = 'none';
-            loadMapButton.disabled = false; // Aktifkan load map saat keluar edit
+            loadMapButton.disabled = false;
 
             codeInput.style.display = 'block';
             runButton.style.display = 'block';
             resetButton.style.display = 'block';
-            robot.style.display = 'block'; // Tampilkan kembali gambar robot
+            robot.style.display = 'block';
             editorInstructions.style.display = 'none';
 
             addLog("Keluar dari Mode Edit Peta.");
@@ -388,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!currentMapData.start || !currentMapData.target || currentMapData.target.length === 0) {
                 showMessage('fail', 'Peta yang diedit tidak valid! Perlu posisi awal dan setidaknya satu target.');
             }
-            drawArena(currentMapData); // Gambar ulang untuk memastikan robot di posisi awal yang benar dan bersih dari indikator edit
+            drawArena(currentMapData);
         }
     });
 
@@ -558,11 +552,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             addLog("Tidak ada peta tersimpan, menggunakan peta default.");
             loadMap({
-                start: { x: 0, y: 0 },
-                target: [{ x: GRID_SIZE - 1, y: GRID_SIZE - 1 }],
-                obstacles: []
-            });
-        }
+                    start: { x: 0, y: 0 },
+                    target: [{ x: GRID_SIZE - 1, y: GRID_SIZE - 1 }],
+                    obstacles: []
+                });
+            }
     } catch (e) {
         addLog("Gagal memuat peta tersimpan otomatis saat startup: " + e.message + ". Menggunakan peta default.");
         loadMap({
