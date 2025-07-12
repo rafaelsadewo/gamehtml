@@ -16,27 +16,26 @@
     --error-red: #dc3545;
     --warning-yellow: #ffc107;
     --info-cyan: #17a2b8;
-    --grid-cell-size: 40px; /* Variabel untuk ukuran sel grid */
-    --robot-width: 45px; /* Lebar robot */
-    --robot-height: 35px; /* Tinggi robot */
+    --grid-cell-size: 40px; /* Variabel untuk ukuran sel grid (sebelumnya CELL_SIZE) */
+    --robot-width: 45px; /* Lebar baru robot */
+    --robot-height: 35px; /* Tinggi baru robot */
 }
 
 
 /* Gaya Global Body */
 body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
     background-color: var(--light-grey);
     display: flex;
     flex-direction: column;
-    /* Gunakan 100dvh untuk adaptasi viewport mobile yang lebih baik */
-    min-height: 100dvh; /* Prefer 100dvh for dynamic viewport height on mobile */
-    height: 100dvh;     /* Fallback to 100vh for older browsers */
-    /* Fallback for browsers not supporting dvh */
     min-height: 100vh;
-    height: 100vh;
     color: var(--text-color);
+    height: 100vh;
 }
 
 /* Gaya Header */
@@ -64,24 +63,21 @@ header p {
 /* Gaya Container Utama (Box Putih Besar) */
 .container {
     display: flex;
-    flex: 1; /* Penting: Mengambil sisa ruang vertikal */
+    flex: 1;
     padding: 30px;
     gap: 30px;
     max-width: 1200px;
-    width: calc(100% - 60px); /* Sesuaikan lebar dengan padding agar pas di viewport */
     margin: 30px auto;
     background-color: white;
     box-shadow: 0 8px 20px var(--shadow-medium);
     border-radius: 12px;
-    /* min-height: 650px; DIHAPUS atau diatur ulang untuk responsivitas */
-    min-height: auto; /* PERBAIKAN: Biarkan tinggi minimal menyesuaikan konten */
+    min-height: 650px;
     align-items: flex-start;
-    box-sizing: border-box; /* Pastikan padding masuk ke dalam width/height */
 }
 
 /* Gaya Kolom Kiri (Kode Program) dan Kolom Kanan (Tampilan Robot) */
 .code-editor, .robot-display {
-    flex: 1; /* Mengambil sisa ruang horizontal yang sama */
+    flex: 1;
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 25px;
@@ -91,9 +87,7 @@ header p {
     box-shadow: 0 2px 10px var(--shadow-light);
     display: flex;
     flex-direction: column;
-    /* height: 600px; DIHAPUS atau diatur ulang untuk responsivitas */
-    height: auto; /* PERBAIKAN: Biarkan tinggi menyesuaikan konten */
-    min-height: 400px; /* Beri min-height agar tidak terlalu kecil */
+    height: 600px;
 }
 
 .code-editor h2, .robot-display h2 {
@@ -261,7 +255,7 @@ p#currentMapInfo {
 
 /* Gaya Instruksi Editor Peta (muncul di mode edit) */
 .editor-instructions {
-    width: 80%;
+    width: 100%;
     background-color: #e6f7ff;
     border: 1px solid #b3e0ff;
     border-radius: 8px;
@@ -308,28 +302,27 @@ p#currentMapInfo {
 
 /* Gaya Arena Robot */
 #robotArena {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-template-rows: repeat(10, 1fr);
-  width: calc(var(--grid-cell-size) * 10);
-  height: calc(var(--grid-cell-size) * 10);
-  margin: 0 auto;
-  background-color: #f3fff3;
-  position: relative;
-  border: 2px solid #444;
-  border-radius: 10px;
-  padding: 0;
-  box-sizing: content-box;
-  /* Tambahkan responsivitas untuk arena */
-  max-width: 100%; /* Batasi lebar arena agar tidak melebihi lebar parent */
-  height: auto; /* Biarkan tinggi menyesuaikan lebar (aspek rasio) */
+    display: grid;
+    /* overflow: hidden; DIHAPUS SESUAI PERMINTAAN */
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    width: calc(var(--grid-cell-size) * 10); /* Pastikan width dan height berdasarkan cell size */
+    height: calc(var(--grid-cell-size) * 10);
+    margin: 0 auto;
+    background-color: #f3fff3;
+    position: relative;
+    border: 2px solid #444;
+    border-radius: 10px;
+    padding: 0; /* Pastikan tidak ada padding */
+    box-sizing: content-box; /* Pastikan border menambah ukuran */
 }
 
 .grid-cell {
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  position: relative;
-  overflow: hidden;
+    /* width: 100%; dan height: 100% sudah implisit dengan grid */
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* Sangat penting agar border tidak menambah ukuran total cell */
+    position: relative;
+    overflow: hidden; /* Tetap pertahankan untuk konten di dalam cell */
 }
 
 /* Efek Hover di Mode Edit */
@@ -341,19 +334,20 @@ p#currentMapInfo {
 /* Gaya Gambar Robot */
 #robot {
     width: var(--robot-width);
+    
     height: var(--robot-height);
-    background-image: url('roboanjay.png');
-    background-size: contain; /* Pakai contain agar gambar tidak terpotong */
+    background-image: url('roboanjay.png'); /* Menggunakan gambar baru */
+    background-size: contain; /* Menggunakan contain untuk memastikan gambar tidak terpotong */
     background-repeat: no-repeat;
-    background-position: center;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform-origin: center center;
+    background-position: center; /* Memastikan gambar berada di tengah elemen #robot */
+    position: absolute; /* Tetap absolute untuk posisi presisi */
+    /* top dan left akan diatur oleh JavaScript, transform translate di JavaScript */
+    transform-origin: center center; /* Rotasi berpusat di tengah gambar */
     transition: top 0.3s ease, left 0.3s ease, transform 0.3s ease;
     box-sizing: border-box;
     z-index: 10;
 }
+
 
 /* Gaya Rintangan */
 .obstacle {
@@ -409,7 +403,7 @@ p#currentMapInfo {
     background-color: var(--medium-grey);
     padding: 15px;
     border-radius: 8px;
-    height: 100px; /* Default height */
+    height: 100px;
     max-height: 200px;
     flex-shrink: 0;
     overflow-y: auto;
@@ -485,102 +479,4 @@ footer {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--dark-blue);
-}
-
-/* --- Media Queries untuk Responsivitas --- */
-
-/* Untuk layar dengan lebar lebih kecil dari 768px (misal: tablet portrait, ponsel) */
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column; /* Ubah layout menjadi kolom */
-        gap: 20px; /* Kurangi jarak antar kolom */
-        padding: 20px; /* Kurangi padding container */
-        margin: 20px auto; /* Kurangi margin container */
-        width: calc(100% - 40px); /* Lebar penuh dikurangi padding */
-        max-width: 100%; /* Pastikan tidak ada batasan lebar yang terlalu besar */
-    }
-
-    .code-editor, .robot-display {
-        width: 100%; /* Ambil lebar penuh */
-        height: auto; /* Biarkan tinggi menyesuaikan konten */
-        min-height: auto; /* Hapus min-height kaku */
-        margin: 0; /* Hapus margin vertikal */
-    }
-
-    #robotArena {
-        width: 100%; /* Arena robot mengambil lebar penuh parent */
-        height: auto; /* Biarkan tinggi menyesuaikan aspek rasio grid */
-        padding-bottom: 100%; /* Membuat kotak persegi untuk arena, mempertahankan aspek rasio */
-        position: relative;
-        overflow: hidden; /* Tambahkan kembali overflow hidden jika ada masalah tampilan grid */
-    }
-
-    #robotArena > .grid-cell { /* Memastikan sel grid menyesuaikan dengan arena yang flexibel */
-        position: absolute; /* Atur posisi absolut untuk sel di dalam arena */
-        width: calc(100% / 10); /* Hitung lebar sel secara dinamis */
-        height: calc(100% / 10); /* Hitung tinggi sel secara dinamis */
-    }
-    
-    /* Reposisikan elemen di dalam sel grid secara absolut */
-    #robotArena .grid-cell .obstacle,
-    #robotArena .grid-cell .target,
-    #robotArena .grid-cell .start-point-indicator {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-    }
-
-    /* Ukuran font yang lebih kecil untuk layar kecil */
-    header h1 {
-        font-size: 1.2rem;
-    }
-    header p {
-        font-size: 0.8rem;
-    }
-    .code-editor h2, .robot-display h2 {
-        font-size: 1.2rem;
-    }
-    button {
-        font-size: 0.9rem;
-        padding: 10px 15px;
-    }
-    #codeInput {
-        font-size: 0.9rem;
-        min-height: 150px;
-    }
-    #outputLog {
-        font-size: 0.8rem;
-        height: 80px;
-        margin-top: 15px;
-    }
-    .message {
-        font-size: 1.5rem;
-        padding: 20px 30px;
-    }
-}
-
-/* Untuk layar yang sangat kecil (misal: ponsel landscape) */
-@media (max-width: 480px) {
-    .container {
-        padding: 15px;
-        margin: 15px auto;
-        gap: 15px;
-        width: calc(100% - 30px);
-    }
-    button {
-        padding: 8px 12px;
-        font-size: 0.8rem;
-    }
-    .code-editor h2, .robot-display h2 {
-        font-size: 1rem;
-    }
-    .editor-instructions {
-        padding: 15px;
-        font-size: 0.85rem;
-    }
-    .editor-instructions h3 {
-        font-size: 1.1rem;
-    }
 }
