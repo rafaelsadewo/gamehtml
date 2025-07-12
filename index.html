@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoboCode Simulator - Map Editor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>RoboCode Simulator</h1>
+        <p>Program Robotmu di Sini!</p>
+    </header>
+
+    <div class="container">
+        <div class="code-editor">
+            <h2>Kode Program</h2>
+            <div class="map-controls">
+                <button id="editMapButton">Edit Peta</button>
+                <button id="saveMapButton" style="display:none;">Simpan Peta</button>
+                <button id="loadMapButton">Muat Peta</button>
+                <button id="clearMapButton" style="display:none;">Bersihkan Peta</button>
+            </div>
+            <div class="edit-mode-tools" style="display:none;">
+                <label>Mode Edit:</label>
+                <select id="editModeSelect">
+                    <option value="obstacle">Rintangan</option>
+                    <option value="target">Target</option>
+                    <option value="start">Posisi Awal Robot</option>
+                    <option value="erase">Hapus</option>
+                </select>
+            </div>
+            <p><span id="currentMapInfo">&nbsp;</span></p>
+
+            <div id="editorInstructions" class="editor-instructions" style="display:none;">
+                <h3>Panduan Editor Peta:</h3>
+                <ul>
+                    <li>Pilih **Mode Edit** (Rintangan, Target, Posisi Awal Robot, Hapus) di atas.</li>
+                    <li>**Klik pada kotak peta** di sebelah kanan untuk menempatkan atau menghapus elemen.</li>
+                    <li>Peta harus memiliki **Posisi Awal Robot** (kotak kuning) dan setidaknya satu **Target** (kotak hijau) agar valid.</li>
+                    <li>Tekan **"Simpan Peta"** untuk menyimpan perubahan.</li>
+                    <li>Tekan **"Bersihkan Peta"** untuk memulai dari peta kosong.</li>
+                </ul>
+                <p>Setelah selesai, klik **"Keluar Mode Edit"** untuk menjalankan kode.</p>
+            </div>
+            <textarea id="codeInput" placeholder="Ketik perintah di sini, pisahkan dengan baris baru.&#10;Contoh:&#10;maju&#10;kanan&#10;maju(3)&#10;mundur"></textarea>
+            <button id="runButton">Jalankan Kode</button>
+            <button id="resetButton">Reset Robot</button>
+        </div>
+
+        <div class="robot-display">
+            <h2>Tampilan Robot</h2>
+            <div id="robotArena">
+                <div id="robot"></div>
+            </div>
+            <div id="outputLog">
+                <h3>Log Perintah:</h3>
+                <pre id="logContent"></pre>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 RoboCode Simulator</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
