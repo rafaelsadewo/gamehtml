@@ -36,11 +36,6 @@ body {
     min-height: 100vh;
     color: var(--text-color);
     height: 100vh;
-    transform: scale(1.25);
-    transform-origin: top left; /* Memastikan skala dimulai dari kiri atas */
-    width: 100vw/1.25;
-    height: 100vw/1.25;
-    overflow: auto; /* Tambahkan overflow auto untuk scroll jika konten melebihi viewport */
 }
 
 /* Gaya Header */
