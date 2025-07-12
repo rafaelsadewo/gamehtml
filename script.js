@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const logContent = document.getElementById('logContent');
 
     const editMapButton = document.getElementById('editMapButton');
-    const saveMapButton = document.getElementById('saveMapButton');
+    const saveMapButton = document = document.getElementById('saveMapButton');
     const loadMapButton = document.getElementById('loadMapButton');
     const clearMapButton = document.getElementById('clearMapButton');
     const editModeTools = document.querySelector('.edit-mode-tools');
@@ -18,13 +18,26 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.getElementById('currentMapInfo').parentElement.style.display = 'none';
 
-
-    // --- Perubahan BARU di sini: Dapatkan elemen instruksi editor ---
     const editorInstructions = document.getElementById('editorInstructions');
-    // --- Akhir perubahan BARU ---
+
+    // Dapatkan ukuran dari CSS Variables untuk memastikan sinkronisasi
+    const computedStyle = getComputedStyle(document.documentElement);
+    // Menggunakan try-catch sebagai fallback yang lebih aman
+    let CELL_SIZE = 40; // Default fallback
+    let ROBOT_WIDTH = 45; // Default fallback
+    let ROBOT_HEIGHT = 35; // Default fallback
+
+    try {
+        CELL_SIZE = parseInt(computedStyle.getPropertyValue('--grid-cell-size').replace('px', ''));
+        ROBOT_WIDTH = parseInt(computedStyle.getPropertyValue('--robot-width').replace('px', ''));
+        ROBOT_HEIGHT = parseInt(computedStyle.getPropertyValue('--robot-height').replace('px', ''));
+    } catch (e) {
+        // addLog("Warning: Could not read CSS variables for CELL_SIZE, ROBOT_WIDTH, or ROBOT_HEIGHT. Using fallback values. Error: " + e.message);
+        // Hapus log warning ini jika terlalu banyak, hanya untuk debugging
+    }
+
 
     const GRID_SIZE = 10;
-    const CELL_SIZE = 40; // Pastikan ini konsisten dengan --cell-size di CSS
 
     let robotGridX, robotGridY;
     let currentDirection; // 'up', 'right', 'down', 'left'
@@ -37,28 +50,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }; // Default map
     let editTool = 'obstacle'; // Default tool for map editing
 
-    //posisi baru robot (PERBAIKAN DI SINI)
+    //posisi baru robot
     function updateRobotPosition() {
-        const left = robotGridX * CELL_SIZE;
-        const top = robotGridY * CELL_SIZE;
+        const cellLeft = robotGridX * CELL_SIZE;
+        const cellTop = robotGridY * CELL_SIZE;
 
-        // Tidak perlu lagi mengukur lebar/tinggi robot secara dinamis
-        // karena ukurannya sudah diatur secara eksplisit di CSS
-        // agar sesuai dengan CELL_SIZE.
-        // Cukup set posisi top dan left. CSS akan mengurus penempatan gambar di tengah.
-        robot.style.left = `${left}px`;
-        robot.style.top = `${top}px`;
+        // Hitung offset untuk menengahkan robot di dalam sel
+        const offsetX = (CELL_SIZE - ROBOT_WIDTH) / 2;
+        const offsetY = (CELL_SIZE - ROBOT_HEIGHT) / 2;
+
+        robot.style.left = `${cellLeft + offsetX}px`;
+        robot.style.top = `${cellTop + offsetY}px`;
 
         let rotation = 0;
         switch (currentDirection) {
             case 'up': rotation = 0; break;
             case 'right': rotation = 90; break;
             case 'down': rotation = 180; break;
-            case 'left': rotation = -90; break;
+            case 'left': rotation = 270; break;
         }
-
-        // transformOrigin sudah diatur di CSS, jadi baris ini opsional
-        // robot.style.transformOrigin = 'center center';
         robot.style.transform = `rotate(${rotation}deg)`;
     }
 
@@ -318,12 +328,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!collisionDetected && targetReached) {
             addLog("Selamat! Robot berhasil mencapai target!");
             showMessage('success', 'Misi Selesai!');
-            currentDirection = 'up';
-            updateRobotPosition();
         } else if (!collisionDetected && !targetReached) {
             addLog("Eksekusi kode selesai. Robot belum mencapai target.");
             showMessage('fail', 'Target Belum Tercapai!');
         }
+
+        // PERBAIKAN: Rotasi robot menjadi 0 derajat (menghadap ke atas) setelah eksekusi selesai
+        currentDirection = 'up';
+        updateRobotPosition();
 
         runButton.disabled = false;
         resetButton.disabled = false;
