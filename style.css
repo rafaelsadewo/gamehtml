@@ -24,6 +24,9 @@
 
 /* Gaya Global Body */
 body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
