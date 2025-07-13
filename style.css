@@ -235,21 +235,19 @@ button#loadMapButton {
 }
 
 #robotArena {
-    max-width: 100%;
-    width: 100%;
-    aspect-ratio: 1 / 1; /* Biar tetap kotak */
-    height: auto;
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
-    border: 2px solid #444;
-    border-radius: 10px;
+    width: calc(var(--grid-cell-size) * 10);
+    height: calc(var(--grid-cell-size) * 10);
+    margin: 0 auto;
     background-color: #f3fff3;
     position: relative;
+    border: 2px solid #444;
+    border-radius: 10px;
 }
 
 .grid-cell {
-    aspect-ratio: 1 / 1;
     border: 1px solid #ccc;
     box-sizing: border-box;
     position: relative;
