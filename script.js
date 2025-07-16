@@ -189,13 +189,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     robotGridY = nextY;
                     updateRobotPosition();
                     addLog(`Robot maju (langkah ${i + 1}/${steps}). Posisi: (${robotGridX},${robotGridY})`);
+
+                    if (checkTarget(robotGridX, robotGridY, currentMapData)) {
+                        targetReached = true;
+                        addLog("Robot berhenti tepat di target!");
+                        showMessage('success', 'Misi Selesai!');
+                        break; // langsung stop loop kalau nyentuh target
+                    }
                     await new Promise(r => setTimeout(r, 350));
                 }
-                if (!collisionDetected && checkTarget(robotGridX, robotGridY, currentMapData)) {
-                    targetReached = true;
-                    addLog("Robot berhenti tepat di target!");
-                }
                 executed = true;
+            }
             } else if ((match = command.match(/^kanan(?:\((\d+)\))?$/))) {
                 steps = parseInt(match[1] || '1');
                 for (let i = 0; i < steps; i++) {
@@ -256,8 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!executed) addLog(`Perintah tidak dikenal: \"${command}\"`);
         }
 
-        if (targetReached) showMessage('success', 'Misi Selesai!');
-        else if (!collisionDetected) showMessage('fail', 'Target belum tercapai.');
+        if (!targetReached && !collisionDetected) {
+            showMessage('fail', 'Target belum tercapai.');
+        }
 
         currentDirection = 'up';
         updateRobotPosition();
