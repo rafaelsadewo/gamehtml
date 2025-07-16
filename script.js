@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const logContent = document.getElementById('logContent');
 
     const editMapButton = document.getElementById('editMapButton');
-    const saveMapButton = document.getElementById('saveMapButton'); // Diperbaiki dari "document = document.getElementById"
+    const saveMapButton = document.getElementById('saveMapButton');
     const loadMapButton = document.getElementById('loadMapButton');
     const clearMapButton = document.getElementById('clearMapButton');
     const editModeTools = document.querySelector('.edit-mode-tools');
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await new Promise(resolve => setTimeout(resolve, 500));
 
         for (const command of commands) {
-            if (collisionDetected || targetReached) break;
+            if (collisionDetected) break; // Jika sudah tabrakan, hentikan eksekusi perintah berikutnya
 
             let executed = false;
             let nextX = robotGridX;
@@ -229,18 +229,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else if (collision === 'obstacle') {
                             showMessage('fail', 'Robot menabrak rintangan!');
                         }
-                        break;
+                        // Robot tetap di posisi sebelum tabrakan jika terjadi tabrakan
+                        break; // Keluar dari loop langkah 'maju'
                     }
 
                     robotGridX = nextX;
                     robotGridY = nextY;
                     updateRobotPosition();
                     addLog(`Robot maju (langkah ${i + 1}/${steps}). Posisi: (${robotGridX},${robotGridY})`);
-                    if (checkTarget(robotGridX, robotGridY, currentMapData)) {
-                        targetReached = true;
-                        addLog("Robot mencapai target!");
-                        break;
-                    }
                     await new Promise(resolve => setTimeout(resolve, 350));
                 }
                 executed = true;
@@ -292,17 +288,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else if (collision === 'obstacle') {
                             showMessage('fail', 'Robot menabrak rintangan!');
                         }
-                        break;
+                        // Robot tetap di posisi sebelum tabrakan jika terjadi tabrakan
+                        break; // Keluar dari loop langkah 'mundur'
                     }
                     robotGridX = nextX;
                     robotGridY = nextY;
                     updateRobotPosition();
                     addLog(`Robot mundur (langkah ${i + 1}/${steps}). Posisi: (${robotGridX},${robotGridY})`);
-                    if (checkTarget(robotGridX, robotGridY, currentMapData)) {
-                        targetReached = true;
-                        addLog("Robot mencapai target!");
-                        break;
-                    }
                     await new Promise(resolve => setTimeout(resolve, 350));
                 }
                 executed = true;
@@ -311,11 +303,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!executed) {
                 addLog(`Perintah tidak dikenal: "${command}"`);
             }
-            if (!collisionDetected && !targetReached) {
-                await new Promise(resolve => setTimeout(resolve, 200));
-            } else {
-                break;
+            if (collisionDetected) { // Periksa lagi setelah perintah selesai
+                break; // Hentikan eksekusi perintah lebih lanjut jika terjadi tabrakan
             }
+            await new Promise(resolve => setTimeout(resolve, 200));
+        }
+
+        // PENTING: Periksa target HANYA setelah semua perintah selesai dieksekusi,
+        // dan tidak ada tabrakan yang terdeteksi
+        if (!collisionDetected) {
+            targetReached = checkTarget(robotGridX, robotGridY, currentMapData);
         }
 
         if (!collisionDetected && targetReached) {
@@ -326,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showMessage('fail', 'Target Belum Tercapai!');
         }
 
-        currentDirection = 'up';
+        currentDirection = 'up'; // Reset arah robot setelah selesai
         updateRobotPosition();
 
         runButton.disabled = false;
@@ -552,11 +549,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             addLog("Tidak ada peta tersimpan, menggunakan peta default.");
             loadMap({
-                    start: { x: 0, y: 0 },
-                    target: [{ x: GRID_SIZE - 1, y: GRID_SIZE - 1 }],
-                    obstacles: []
-                });
-            }
+                start: { x: 0, y: 0 },
+                target: [{ x: GRID_SIZE - 1, y: GRID_SIZE - 1 }],
+                obstacles: []
+            });
+        }
     } catch (e) {
         addLog("Gagal memuat peta tersimpan otomatis saat startup: " + e.message + ". Menggunakan peta default.");
         loadMap({
