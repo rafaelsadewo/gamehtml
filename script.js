@@ -194,12 +194,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         targetReached = true;
                         addLog("Robot berhenti tepat di target!");
                         showMessage('success', 'Misi Selesai!');
-                        break; // langsung stop loop kalau nyentuh target
+                        break;
                     }
                     await new Promise(r => setTimeout(r, 350));
                 }
                 executed = true;
-            }
             } else if ((match = command.match(/^kanan(?:\((\d+)\))?$/))) {
                 steps = parseInt(match[1] || '1');
                 for (let i = 0; i < steps; i++) {
@@ -248,11 +247,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     robotGridY = nextY;
                     updateRobotPosition();
                     addLog(`Robot mundur (langkah ${i + 1}/${steps}). Posisi: (${robotGridX},${robotGridY})`);
+
+                    if (checkTarget(robotGridX, robotGridY, currentMapData)) {
+                        targetReached = true;
+                        addLog("Robot berhenti tepat di target!");
+                        showMessage('success', 'Misi Selesai!');
+                        break;
+                    }
                     await new Promise(r => setTimeout(r, 350));
-                }
-                if (!collisionDetected && checkTarget(robotGridX, robotGridY, currentMapData)) {
-                    targetReached = true;
-                    addLog("Robot berhenti tepat di target!");
                 }
                 executed = true;
             }
@@ -338,7 +340,6 @@ document.addEventListener('DOMContentLoaded', () => {
         addLog("Peta dikosongkan.");
     });
 
-    // Inisialisasi saat load
     const saved = localStorage.getItem('savedRoboMap');
     if (saved) loadMap(JSON.parse(saved));
     else drawArena(currentMapData);
