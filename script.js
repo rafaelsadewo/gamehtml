@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addLog("Memulai eksekusi kode...");
 
         let collisionDetected = false;
-        let finalTargetReached = false; // Mengubah nama agar lebih jelas
+        let targetReached = false;
 
         robotGridX = currentMapData.start.x;
         robotGridY = currentMapData.start.y;
@@ -224,7 +224,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     const collision = checkCollision(nextX, nextY, currentMapData);
                     if (collision) {
                         collisionDetected = true;
-                        // showMessage dipanggil setelah loop perintah utama selesai
+                        if (collision === 'out_of_bounds') {
+                            showMessage('fail', 'Robot keluar batas!');
+                        } else if (collision === 'obstacle') {
+                            showMessage('fail', 'Robot menabrak rintangan!');
+                        }
+                        // Robot tetap di posisi sebelum tabrakan jika terjadi tabrakan
                         break; // Keluar dari loop langkah 'maju'
                     }
 
@@ -278,7 +283,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     const collision = checkCollision(nextX, nextY, currentMapData);
                     if (collision) {
                         collisionDetected = true;
-                        // showMessage dipanggil setelah loop perintah utama selesai
+                        if (collision === 'out_of_bounds') {
+                            showMessage('fail', 'Robot keluar batas!');
+                        } else if (collision === 'obstacle') {
+                            showMessage('fail', 'Robot menabrak rintangan!');
+                        }
+                        // Robot tetap di posisi sebelum tabrakan jika terjadi tabrakan
                         break; // Keluar dari loop langkah 'mundur'
                     }
                     robotGridX = nextX;
@@ -299,19 +309,18 @@ document.addEventListener('DOMContentLoaded', () => {
             await new Promise(resolve => setTimeout(resolve, 200));
         }
 
-        // Tentukan hasil akhir dan tampilkan pop-up
-        if (collisionDetected) {
-            // Pesan tabrakan sudah ditampilkan di checkCollision, sekarang tampilkan pop-up umum
-            showMessage('fail', 'GAGAL! Robot menabrak atau keluar batas.');
-        } else {
-            finalTargetReached = checkTarget(robotGridX, robotGridY, currentMapData);
-            if (finalTargetReached) {
-                addLog("Selamat! Robot berhasil mencapai target!");
-                showMessage('success', 'BERHASIL! Misi Selesai!');
-            } else {
-                addLog("Eksekusi kode selesai. Robot belum mencapai target.");
-                showMessage('fail', 'GAGAL! Target Belum Tercapai!');
-            }
+        // PENTING: Periksa target HANYA setelah semua perintah selesai dieksekusi,
+        // dan tidak ada tabrakan yang terdeteksi
+        if (!collisionDetected) {
+            targetReached = checkTarget(robotGridX, robotGridY, currentMapData);
+        }
+
+        if (!collisionDetected && targetReached) {
+            addLog("Selamat! Robot berhasil mencapai target!");
+            showMessage('success', 'Misi Selesai!');
+        } else if (!collisionDetected && !targetReached) {
+            addLog("Eksekusi kode selesai. Robot belum mencapai target.");
+            showMessage('fail', 'Target Belum Tercapai!');
         }
 
         currentDirection = 'up'; // Reset arah robot setelah selesai
