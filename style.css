@@ -43,7 +43,7 @@ header {
   position: sticky;
   top: 0;
   z-index: 100;
-  width: 102.5%;
+  width: 120%;
 }
 
 header h1 {
@@ -353,4 +353,5 @@ footer {
     transform-origin: top center;
   }
 }
+
 
